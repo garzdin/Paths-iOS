@@ -7,19 +7,40 @@
 //
 
 import UIKit
+import Mapbox
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MGLMapViewDelegate {
 
+    @IBOutlet var mapView: MGLMapView!
+    
+    var object: Path? {
+        didSet {
+            if let object = object {
+                if let pois = object.pois {
+                    for poi in pois {
+                        let marker = MGLPointAnnotation()
+                        marker.coordinate = CLLocationCoordinate2D(latitude: CLLocationDegrees(poi.latitude), longitude: CLLocationDegrees(poi.longitude))
+                        marker.title = poi.name
+                        if let _ = view {
+                            self.mapView.addAnnotation(marker)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        mapView.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
-
+    
+    func mapView(_ mapView: MGLMapView, annotationCanShowCallout annotation: MGLAnnotation) -> Bool {
+        return true
+    }
 }
 
